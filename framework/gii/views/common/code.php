@@ -1,11 +1,11 @@
 <?php
-if($file->type==='php')
+if(in_array($file->type,array('php','js','vue')))
 {
 	echo '<div class="content">';
-	highlight_string($file->content);
+	highlight_string("<?php " . $file->content);
 	echo '</div>';
 }
-elseif(in_array($file->type,array('txt','js','css','sql')))
+elseif(in_array($file->type,array('txt','css')))
 {
 	echo '<div class="content">';
 	echo nl2br($file->content);
