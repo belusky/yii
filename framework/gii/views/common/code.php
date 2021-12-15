@@ -1,5 +1,5 @@
 <?php
-if(in_array($file->type,array('php','js','vue')))
+if(in_array($file->type,array('php','js','vue','json')))
 {
 	echo '<div class="content">';
 	highlight_string("<?php " . $file->content);
