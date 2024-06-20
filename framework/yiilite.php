@@ -1839,7 +1839,7 @@ class CWebApplication extends CApplication
 			$classFile=$basePath.DIRECTORY_SEPARATOR.$className.'.php';
 			if($owner->controllerNamespace!==null)
 				$className=$owner->controllerNamespace.'\\'.str_replace('/','\\',$controllerID).$className;
-			if(is_file($classFile))
+			if(is_file($classFile) || class_exists($className,false)) // MB: added class_exists() check to allow use builded app.php
 			{
 				if(!class_exists($className,false))
 					require($classFile);
