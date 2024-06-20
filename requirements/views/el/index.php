@@ -18,7 +18,7 @@
 <h2>Περιγραφή</h2>
 <p>
 Αυτή η σελίδα ελέγχει αν η παραμετροποίηση του διακομιστή σας είναι σωστή
-για την εκτέλεση των εφαρμογών ιστού του <a href="http://www.yiiframework.com/">Yii</a>.
+για την εκτέλεση των εφαρμογών ιστού του <a href="https://www.yiiframework.com/">Yii</a>.
 Ελέγχει αν ο διακομιστής εκτελεί τη σωστή έκδοση PHP, αν έχουν φορτωθεί
 οι κατάλληλες επεκτάσεις PHP και αν οι ρυθμίσεις του αρχείου php.ini είναι σωστές.
 </p>
@@ -43,7 +43,7 @@
 	<td>
 	<?php echo $requirement[0]; ?>
 	</td>
-	<td class="<?php echo $requirement[2] ? 'πέρασε' : ($requirement[1] ? 'απέτυχε' : 'προειδοποίηση'); ?>">
+	<td class="<?php echo $requirement[2] ? 'passed' : ($requirement[1] ? 'failed' : 'warning'); ?>">
 	<?php echo $requirement[2] ? 'Πέρασε' : ($requirement[1] ? 'Απέτυχε' : 'Προειδοποίηση'); ?>
 	</td>
 	<td>
