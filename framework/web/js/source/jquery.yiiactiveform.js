@@ -267,6 +267,9 @@
 
 			if (hasError) {
 				$error.html(messages[attribute.id][0]);
+				if (attribute.errorCssClass !== errorCss) {
+					$el.addClass(errorCss); // MB: added class also on input, if differs from container class
+				}
 				$container.addClass(attribute.errorCssClass);
 			} else if (attribute.enableAjaxValidation || attribute.clientValidation) {
 				$container.addClass(attribute.successCssClass);
