@@ -1446,7 +1446,11 @@ class CStatElement
 			if(isset($table->foreignKeys[$fk]))
 			{
 				list($tableName,$pk)=$table->foreignKeys[$fk];
-				if($schema->compareTableNames($pkTable->rawName,$tableName))
+				if($schema->compareTableNames($pkTable->rawName,$tableName)
+					// MB: special case, when relation if defined in CActiveRecord as db view,
+					// but foreign keys are inherited from original table
+					// but of course table name differs from view name
+					|| method_exists($parent->model, 'compareTableName') && $parent->model->compareTableName($tableName))
 					$map[$pk]=$fk;
 				else
 					throw new CDbException(Yii::t('yii','The relation "{relation}" in active record class "{class}" is specified with a foreign key "{key}" that does not point to the parent table "{table}".',
