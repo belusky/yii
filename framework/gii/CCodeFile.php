@@ -49,10 +49,14 @@ class CCodeFile extends CComponent
 	 */
 	public function __construct($path,$content)
 	{
+		Yii::import('gii.components.TextDiff');
+
 		$this->path=strtr($path,array('/'=>DIRECTORY_SEPARATOR,'\\'=>DIRECTORY_SEPARATOR));
 		$this->content=$content;
-		if(is_file($path))
-			$this->operation=file_get_contents($path)===$content ? self::OP_SKIP : self::OP_OVERWRITE;
+		if(is_file($path)){
+			$diff=TextDiff::compare(file_get_contents($path), $content);
+			$this->operation=!$diff ? self::OP_SKIP : self::OP_OVERWRITE;
+		}
 		elseif($content===null)  // is dir
 			$this->operation=is_dir($path) ? self::OP_SKIP : self::OP_NEW;
 		else
