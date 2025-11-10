@@ -714,7 +714,7 @@ abstract class CActiveRecord extends CModel
 		if(property_exists($this,$name))
 			$this->$name=$value;
 		elseif(isset($this->getMetaData()->columns[$name]))
-			$this->_attributes[$name]=$value;
+			$this->_attributes[$name]=$this->_parseAttributeFromDb($this->getMetaData()->columns[$name], $name, $value);
 		else
 			return false;
 		return true;
@@ -1254,7 +1254,7 @@ abstract class CActiveRecord extends CModel
 				if(property_exists($this,$name))
 					$this->$name=$record->$name;
 				else
-					$this->_attributes[$name]=$record->$name;
+					$this->_attributes[$name]=$this->_parseAttributeFromDb($column,$name,$record->$name);
 			}
 			return true;
 		}
@@ -1846,6 +1846,20 @@ abstract class CActiveRecord extends CModel
 	}
 
 	/**
+	 * Parses an attribute value retrieved from database.
+	 * This method is invoked right after an attribute is populated from database.
+	 * User may override this method to do type casting or other parsing tasks.
+	 * @param CDbColumnSchema $md the column metadata
+	 * @param string $name the attribute name
+	 * @param mixed $value the attribute value
+	 * @return mixed the parsed attribute value
+	 */
+	protected function _parseAttributeFromDb($md,$name,$value)
+	{
+		return $value;
+	}
+
+	/**
 	 * Creates an active record with the given attributes.
 	 * This method is internally used by the find methods.
 	 * @param array $attributes attribute values (column name=>column value)
@@ -1866,7 +1880,7 @@ abstract class CActiveRecord extends CModel
 				if(property_exists($record,$name))
 					$record->$name=$value;
 				elseif(isset($md->columns[$name]))
-					$record->_attributes[$name]=$value;
+					$record->_attributes[$name]=$record->_parseAttributeFromDb($md->columns[$name],$name,$value);
 			}
 			$record->_pk=$record->getPrimaryKey();
 			$record->attachBehaviors($record->behaviors());
