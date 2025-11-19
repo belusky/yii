@@ -90,9 +90,9 @@ class GiiModule extends CWebModule
 	 * @var array a list of path aliases that refer to the directories containing code generators.
 	 * The directory referred by a single path alias may contain multiple code generators, each stored
 	 * under a sub-directory whose name is the generator name.
-	 * Defaults to array('application.gii').
+	 * Defaults to empty.
 	 */
-	public $generatorPaths=array('application.gii');
+	public $generatorPaths=array();
 	/**
 	 * @var integer the permission to be set for newly generated code files.
 	 * This value will be used by PHP chmod function.
@@ -130,7 +130,8 @@ class GiiModule extends CWebModule
 				'widgets' => array()
 			)
 		), false);
-		$this->generatorPaths[]='gii.generators';
+		if (empty($this->generatorPaths))
+			$this->generatorPaths=array('application.gii', 'gii.generators');
 		$this->controllerMap=$this->findGenerators();
 	}
 
