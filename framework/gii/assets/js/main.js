@@ -57,7 +57,7 @@ $(document).ready(function() {
 						return '<div id="tip7-title"><span><a href="javascript:;" onclick="$.fancybox.close();">close</a></span>' + (title && title.length ? '<b>' + title + '</b>' : '' ) + '</div>';
 					},
 					'showCloseButton': false,
-					'autoDimensions': false,
+					'autoDimensions': true,
 					'width': 900,
 					'height': 'auto',
 					'onComplete':function(){
