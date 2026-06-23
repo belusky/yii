@@ -22,4 +22,14 @@ class CMysqlTableSchema extends CDbTableSchema
 	 * Defaults to null, meaning no schema (or the current database).
 	 */
 	public $schemaName;
+
+	/**
+	 * @var array composite foreign key constraints that cannot be represented
+	 * as a simple column-to-column mapping. Each entry is indexed by the
+	 * constraint name and contains:
+	 *   'columns'    => local column names (array)
+	 *   'refTable'   => referenced table name (string)
+	 *   'refColumns' => referenced column names (array)
+	 */
+	public $compositeForeignKeys = array();
 }

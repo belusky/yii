@@ -230,7 +230,7 @@ class CMysqlSchema extends CDbSchema
 	{
 		$row=$this->getDbConnection()->createCommand('SHOW CREATE TABLE '.$table->rawName)->queryRow();
 		$matches=array();
-		$regexp='/FOREIGN KEY\s+\(([^\)]+)\)\s+REFERENCES\s+([^\(^\s]+)\s*\(([^\)]+)\)/mi';
+		$regexp='/CONSTRAINT\s+([^\s]+)\s+FOREIGN KEY\s+\(([^\)]+)\)\s+REFERENCES\s+([^\(^\s]+)\s*\(([^\)]+)\)/mi';
 		foreach($row as $sql)
 		{
 			if(preg_match_all($regexp,$sql,$matches,PREG_SET_ORDER))
@@ -238,13 +238,28 @@ class CMysqlSchema extends CDbSchema
 		}
 		foreach($matches as $match)
 		{
-			$keys=array_map('trim',explode(',',str_replace(array('`','"'),'',$match[1])));
-			$fks=array_map('trim',explode(',',str_replace(array('`','"'),'',$match[3])));
-			foreach($keys as $k=>$name)
+			$constraintName=str_replace(array('`','"'),'',$match[1]);
+			$keys=array_map('trim',explode(',',str_replace(array('`','"'),'',$match[2])));
+			$refTable=str_replace(array('`','"'),'',$match[3]);
+			$fks=array_map('trim',explode(',',str_replace(array('`','"'),'',$match[4])));
+			if(count($keys)===1)
 			{
-				$table->foreignKeys[$name]=array(str_replace(array('`','"'),'',$match[2]),$fks[$k]);
-				if(isset($table->columns[$name]))
-					$table->columns[$name]->isForeignKey=true;
+				$table->foreignKeys[$keys[0]]=array($refTable,$fks[0]);
+				if(isset($table->columns[$keys[0]]))
+					$table->columns[$keys[0]]->isForeignKey=true;
+			}
+			else
+			{
+				$table->compositeForeignKeys[$constraintName]=array(
+					'columns'=>$keys,
+					'refTable'=>$refTable,
+					'refColumns'=>$fks,
+				);
+				foreach($keys as $name)
+				{
+					if(isset($table->columns[$name]))
+						$table->columns[$name]->isForeignKey=true;
+				}
 			}
 		}
 	}
