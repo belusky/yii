@@ -92,6 +92,13 @@ EOD;
 		if(empty($languages))
 			$this->usageError("Languages cannot be empty.");
 
+		if(!isset($categories))
+			$categories = array();
+
+		foreach($languages as $language)
+			if (!isset($categories[$language]))
+				$categories[$language] = '*';
+
 		if(!isset($overwrite))
 			$overwrite = false;
 
@@ -122,6 +129,8 @@ EOD;
 				@mkdir($dir);
 			foreach($messages as $category=>$msgs)
 			{
+				if($categories[$language]!=='*' && !in_array($category,$categories[$language]))
+					continue;
 				$msgs=array_values(array_unique($msgs));
 				$this->generateMessageFile($msgs,$dir.DIRECTORY_SEPARATOR.$category.'.php',$overwrite,$removeOld,$sort,$fileHeader);
 			}
