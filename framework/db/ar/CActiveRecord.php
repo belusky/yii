@@ -1115,10 +1115,14 @@ abstract class CActiveRecord extends CModel
 	 * Note, validation is not performed in this method. You may call {@link validate} to perform the validation.
 	 * @param array $attributes list of attributes that need to be saved. Defaults to null,
 	 * meaning all attributes that are loaded from DB will be saved.
-	 * @return boolean whether the update is successful
+	 * @param mixed $condition query condition or criteria.
+	 * @param array $params parameters to be bound to an SQL statement.
+	 * @return boolean whether the update is successful. Note that false is also returned if the saving
+	 * was successfull but no attributes had changed and the database driver returns 0 for the number
+	 * of updated records.
 	 * @throws CDbException if the record is new
 	 */
-	public function update($attributes=null)
+	public function update($attributes=null,$condition='',$params=array())
 	{
 		if($this->getIsNewRecord())
 			throw new CDbException(Yii::t('yii','The active record cannot be updated because it is new.'));
@@ -1127,10 +1131,10 @@ abstract class CActiveRecord extends CModel
 			Yii::trace(get_class($this).'.update()','system.db.ar.CActiveRecord');
 			if($this->_pk===null)
 				$this->_pk=$this->getPrimaryKey();
-			$this->updateByPk($this->getOldPrimaryKey(),$this->getAttributes($attributes));
+			$rowsUpdated=$this->updateByPk($this->getOldPrimaryKey(),$this->getAttributes($attributes),$condition,$params);
 			$this->_pk=$this->getPrimaryKey();
 			$this->afterSave();
-			return true;
+			return $rowsUpdated>0;
 		}
 		else
 			return false;
@@ -1151,12 +1155,14 @@ abstract class CActiveRecord extends CModel
 	 * @param array $attributes attributes to be updated. Each element represents an attribute name
 	 * or an attribute value indexed by its name. If the latter, the record's
 	 * attribute will be changed accordingly before saving.
+	 * @param mixed $condition query condition or criteria.
+	 * @param array $params parameters to be bound to an SQL statement.
 	 * @throws CDbException if the record is new
 	 * @return boolean whether the update is successful. Note that false is also returned if the saving
 	 * was successfull but no attributes had changed and the database driver returns 0 for the number
 	 * of updated records.
 	 */
-	public function saveAttributes($attributes)
+	public function saveAttributes($attributes,$condition='',$params=array())
 	{
 		if(!$this->getIsNewRecord())
 		{
@@ -1171,7 +1177,7 @@ abstract class CActiveRecord extends CModel
 			}
 			if($this->_pk===null)
 				$this->_pk=$this->getPrimaryKey();
-			if($this->updateByPk($this->getOldPrimaryKey(),$values)>0)
+			if($this->updateByPk($this->getOldPrimaryKey(),$values,$condition,$params)>0)
 			{
 				$this->_pk=$this->getPrimaryKey();
 				return true;
