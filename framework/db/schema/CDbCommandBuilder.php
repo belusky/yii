@@ -96,6 +96,7 @@ class CDbCommandBuilder extends CComponent
 		$sql=$this->applyHaving($sql,$criteria->having);
 		$sql=$this->applyOrder($sql,$criteria->order);
 		$sql=$this->applyLimit($sql,$criteria->limit,$criteria->offset);
+		$sql=$this->applyForUpdate($sql,$criteria->forUpdate);
 		$command=$this->_connection->createCommand($sql);
 		$this->bindValues($command,$criteria->params);
 		return $command;
@@ -514,6 +515,19 @@ class CDbCommandBuilder extends CComponent
 			$sql.=' LIMIT '.(int)$limit;
 		if($offset>0)
 			$sql.=' OFFSET '.(int)$offset;
+		return $sql;
+	}
+
+	/**
+	 * Alters the SQL to apply FOR UPDATE.
+	 * @param string $sql SQL query string without FOR UPDATE.
+	 * @param mixed $forUpdate whether to apply FOR UPDATE (boolean true/false or string 'NOWAIT')
+	 * @return string SQL with FOR UPDATE.
+	 */
+	public function applyForUpdate($sql,$forUpdate)
+	{
+		if($forUpdate)
+			$sql.=' FOR UPDATE'.($forUpdate==='NOWAIT' ? ' NOWAIT' : '');
 		return $sql;
 	}
 

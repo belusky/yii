@@ -1737,6 +1737,28 @@ abstract class CActiveRecord extends CModel
 	}
 
 	/**
+	 * Sets {@link CDbCriteria::forUpdate} property to be true.
+	 * This is only used in relational AR query. Please refer to {@link CDbCriteria::forUpdate} for more details.
+	 * @return static the AR object itself
+	 */
+	public function forUpdate()
+	{
+		$this->getDbCriteria()->mergeWith(array('forUpdate' => true));
+		return $this;
+	}
+
+	/**
+	 * Sets {@link CDbCriteria::forUpdate} property to be 'NOWAIT'.
+	 * This is only used in relational AR query. Please refer to {@link CDbCriteria::forUpdate} for more details.
+	 * @return static the AR object itself
+	 */
+	public function forUpdateNoWait()
+	{
+		$this->getDbCriteria()->mergeWith(array('forUpdate' => 'NOWAIT'));
+		return $this;
+	}
+
+	/**
 	 * Updates records with the specified primary key(s).
 	 * See {@link find()} for detailed explanation about $condition and $params.
 	 * Note, the attributes are not checked for safety and validation is NOT performed.
@@ -2012,6 +2034,10 @@ class CBaseActiveRelation extends CComponent
 	 * referenced in this property should be disambiguated with prefix 'relationName.'.
 	 */
 	public $order='';
+	/**
+	 * @var mixed whether to lock selected rows. Can be false, true, or 'NOWAIT'.
+	 */
+	public $forUpdate=false;
 
 	/**
 	 * Constructor.
@@ -2094,6 +2120,9 @@ class CBaseActiveRelation extends CComponent
 			elseif($criteria['having']!=='')
 				$this->having="({$this->having}) AND ({$criteria['having']})";
 		}
+
+		if(isset($criteria['forUpdate']) && $criteria['forUpdate'])
+			$this->forUpdate=$criteria['forUpdate'];
 	}
 }
 

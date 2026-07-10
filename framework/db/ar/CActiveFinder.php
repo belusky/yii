@@ -501,6 +501,8 @@ class CJoinElement
 		}
 
 		$child->applyLazyCondition($query,$baseRecord);
+		if($child->relation->forUpdate)
+			$query->forUpdate=$child->relation->forUpdate;
 
 		$this->_joined=true;
 		$child->_joined=true;
@@ -1273,6 +1275,10 @@ class CJoinQuery
 	 * @var array list of join element IDs (id=>true)
 	 */
 	public $elements=array();
+	/**
+	 * @var mixed FOR UPDATE clause (false, true, or 'NOWAIT')
+	 */
+	public $forUpdate=false;
 
 	/**
 	 * Constructor.
@@ -1295,6 +1301,8 @@ class CJoinQuery
 			$this->params=$criteria->params;
 			if(!$this->distinct && $criteria->distinct)
 				$this->distinct=true;
+			if($criteria->forUpdate)
+				$this->forUpdate=$criteria->forUpdate;
 		}
 		else
 		{
@@ -1371,6 +1379,7 @@ class CJoinQuery
 			$sql.=' ORDER BY ' . implode(', ',$orders);
 
 		$sql=$builder->applyLimit($sql,$this->limit,$this->offset);
+		$sql=$builder->applyForUpdate($sql,$this->forUpdate);
 		$command=$builder->getDbConnection()->createCommand($sql);
 		$builder->bindValues($command,$this->params);
 		return $command;

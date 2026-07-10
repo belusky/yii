@@ -149,6 +149,13 @@ class CDbCriteria extends CComponent
 	 * @since 1.1.7
 	 */
 	public $scopes;
+	/**
+	 * @var boolean whether the query is for update
+	 *
+	 * If true, the query will be appended with 'FOR UPDATE'.
+	 * Can be boolean (true/false) or a string ('NOWAIT').
+	 */
+	public $forUpdate=false;
 
 	/**
 	 * Constructor.
@@ -507,6 +514,7 @@ class CDbCriteria extends CComponent
 			$operator=$operator ? 'AND' : 'OR';
 		if(is_array($criteria))
 			$criteria=new self($criteria);
+
 		if($this->select!==$criteria->select)
 		{
 			if($this->select==='*'||$this->select===false)
@@ -641,6 +649,9 @@ class CDbCriteria extends CComponent
 					$this->with[$k]=$v;
 			}
 		}
+
+		if ($criteria->forUpdate && $this->forUpdate!==$criteria->forUpdate)
+			$this->forUpdate=$criteria->forUpdate;
 	}
 
 	/**
@@ -649,7 +660,7 @@ class CDbCriteria extends CComponent
 	public function toArray()
 	{
 		$result=array();
-		foreach(array('select', 'condition', 'params', 'limit', 'offset', 'order', 'group', 'join', 'having', 'distinct', 'scopes', 'with', 'alias', 'index', 'together') as $name)
+		foreach(array('select', 'condition', 'params', 'limit', 'offset', 'order', 'group', 'join', 'having', 'distinct', 'scopes', 'with', 'alias', 'index', 'together', 'forUpdate') as $name)
 			$result[$name]=$this->$name;
 		return $result;
 	}
