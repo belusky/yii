@@ -1117,9 +1117,8 @@ abstract class CActiveRecord extends CModel
 	 * meaning all attributes that are loaded from DB will be saved.
 	 * @param mixed $condition query condition or criteria.
 	 * @param array $params parameters to be bound to an SQL statement.
-	 * @return boolean whether the update is successful. Note that false is also returned if the saving
-	 * was successfull but no attributes had changed and the database driver returns 0 for the number
-	 * of updated records.
+	 * @return boolean whether the update is successful. Returns true if one or more rows were updated,
+	 * or if the condition is empty (no specific rows targeted).
 	 * @throws CDbException if the record is new
 	 */
 	public function update($attributes=null,$condition='',$params=array())
@@ -1132,6 +1131,9 @@ abstract class CActiveRecord extends CModel
 			if($this->_pk===null)
 				$this->_pk=$this->getPrimaryKey();
 			$rowsUpdated=$this->updateByPk($this->getOldPrimaryKey(),$this->getAttributes($attributes),$condition,$params);
+			if (!$rowsUpdated && $condition==='') {
+				$rowsUpdated=true;
+			}
 			$this->_pk=$this->getPrimaryKey();
 			$this->afterSave();
 			return $rowsUpdated>0;
@@ -1158,9 +1160,8 @@ abstract class CActiveRecord extends CModel
 	 * @param mixed $condition query condition or criteria.
 	 * @param array $params parameters to be bound to an SQL statement.
 	 * @throws CDbException if the record is new
-	 * @return boolean whether the update is successful. Note that false is also returned if the saving
-	 * was successfull but no attributes had changed and the database driver returns 0 for the number
-	 * of updated records.
+	 * @return boolean whether the update is successful. Returns true if one or more rows were updated,
+	 * or if the condition is empty (no specific rows targeted).
 	 */
 	public function saveAttributes($attributes,$condition='',$params=array())
 	{
