@@ -1131,6 +1131,7 @@ abstract class CActiveRecord extends CModel
 			if($this->_pk===null)
 				$this->_pk=$this->getPrimaryKey();
 			$rowsUpdated=$this->updateByPk($this->getOldPrimaryKey(),$this->getAttributes($attributes),$condition,$params);
+			// this is a special case when called from save() with no condition
 			if (!$rowsUpdated && $condition==='') {
 				$rowsUpdated=1;
 			}
