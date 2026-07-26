@@ -1132,7 +1132,7 @@ abstract class CActiveRecord extends CModel
 				$this->_pk=$this->getPrimaryKey();
 			$rowsUpdated=$this->updateByPk($this->getOldPrimaryKey(),$this->getAttributes($attributes),$condition,$params);
 			if (!$rowsUpdated && $condition==='') {
-				$rowsUpdated=true;
+				$rowsUpdated=1;
 			}
 			$this->_pk=$this->getPrimaryKey();
 			$this->afterSave();
